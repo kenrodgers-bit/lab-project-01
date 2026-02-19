@@ -1,0 +1,44 @@
+<svg width="640" height="180" viewBox="0 0 640 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shieldA" x1="72" y1="28" x2="72" y2="146" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1F8DD6"/>
+      <stop offset="1" stop-color="#0B47A6"/>
+    </linearGradient>
+    <linearGradient id="shieldB" x1="72" y1="28" x2="136" y2="146" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#35B4E8"/>
+      <stop offset="1" stop-color="#1570C6"/>
+    </linearGradient>
+    <linearGradient id="flaskFill" x1="84" y1="92" x2="120" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5CC9EE"/>
+      <stop offset="1" stop-color="#29A8DA"/>
+    </linearGradient>
+    <linearGradient id="wordLab" x1="188" y1="70" x2="382" y2="70" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E4EA7"/>
+      <stop offset="1" stop-color="#0B67C6"/>
+    </linearGradient>
+    <linearGradient id="wordInventory" x1="386" y1="70" x2="620" y2="70" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1D9CD6"/>
+      <stop offset="1" stop-color="#0A63C4"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M24 95H46L52 76L60 112L68 92L77 95H166" stroke="#1A91D4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M72 18C52 29 35 31 18 34C16 72 18 122 72 160C126 122 128 72 126 34C109 31 92 29 72 18Z" fill="url(#shieldA)"/>
+  <path d="M72 18V160C126 122 128 72 126 34C109 31 92 29 72 18Z" fill="url(#shieldB)"/>
+
+  <rect x="33" y="44" width="28" height="9" rx="2" fill="#F3F8FE"/>
+  <rect x="42.5" y="34.5" width="9" height="28" rx="2" fill="#F3F8FE"/>
+
+  <path d="M97 56H110C112.761 56 115 58.239 115 61C115 63.761 112.761 66 110 66H109V87L124 114C128 121 124 130 116 134C104 141 89 141 77 134C69 130 65 121 69 114L84 87V66H83C80.239 66 78 63.761 78 61C78 58.239 80.239 56 83 56H97Z" fill="#F8FCFF" stroke="#0B62BF" stroke-width="3"/>
+  <path d="M79 118C91 124 102 124 114 118" stroke="#2BB6E5" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="90" cy="98" r="4" fill="#34B8E8"/>
+  <circle cx="99" cy="105" r="2.6" fill="#63CFF1"/>
+  <circle cx="86" cy="112" r="2.6" fill="#63CFF1"/>
+
+  <text x="174" y="84" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="56" font-weight="700" fill="url(#wordLab)">Lab</text>
+  <text x="288" y="84" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="56" font-weight="700" fill="url(#wordInventory)">Inventory</text>
+  <text x="288" y="118" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" letter-spacing="10" font-weight="700" fill="#656F7F">SYSTEM</text>
+  <path d="M170 108H260" stroke="#9AA4B2" stroke-width="3"/>
+  <path d="M417 108H508" stroke="#9AA4B2" stroke-width="3"/>
+</svg>

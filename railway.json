@@ -1,0 +1,12 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "npm install && npm --prefix server install && npm run build && npm --prefix server run migrate"
+  },
+  "deploy": {
+    "startCommand": "npm --prefix server start",
+    "healthcheckPath": "/health/ready",
+    "healthcheckTimeout": 120
+  }
+}
