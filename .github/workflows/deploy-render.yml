@@ -1,0 +1,69 @@
+name: CI and Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: render-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+    steps:
+      - name: Log workflow start
+        run: |
+          echo "Starting CI and deployment workflow..."
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Branch ref: $GITHUB_REF"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            server/package-lock.json
+
+      - name: Install frontend dependencies
+        run: |
+          echo "Installing root dependencies..."
+          npm ci
+
+      - name: Install backend dependencies
+        run: |
+          echo "Installing server dependencies..."
+          npm ci --prefix server
+
+      - name: Run tests
+        shell: bash
+        run: |
+          echo "Running test/quality checks..."
+          if npm run | grep -qE '^[[:space:]]+test'; then
+            npm test
+          else
+            echo "No test script found. Running lint and build as validation."
+            npm run lint
+            npm run build
+          fi
+
+      - name: Deploy to Render
+        shell: bash
+        run: |
+          echo "Triggering Render deployment..."
+          if [ -z "${RENDER_DEPLOY_HOOK_URL}" ]; then
+            echo "Missing secret: RENDER_DEPLOY_HOOK_URL"
+            exit 1
+          fi
+          curl --fail --show-error --silent --request POST "${RENDER_DEPLOY_HOOK_URL}"
+          echo "Render deploy hook triggered successfully."
