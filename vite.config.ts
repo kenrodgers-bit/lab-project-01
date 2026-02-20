@@ -4,6 +4,9 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: "0.0.0.0",
+    port: 5500,
+    strictPort: true,
     allowedHosts: true,
     headers: {
       'X-Content-Type-Options': 'nosniff',
@@ -12,6 +15,9 @@ export default defineConfig({
     },
   },
   preview: {
+    host: "0.0.0.0",
+    port: 5500,
+    strictPort: true,
     headers: {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab Inventory Setup Wizard</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background: linear-gradient(155deg, #f2f9ff, #dbeafe);
+        color: #0d2542;
+      }
+      .container {
+        padding: 18px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 21px;
+      }
+      p {
+        margin: 0 0 16px;
+        font-size: 13px;
+      }
+      label {
+        display: block;
+        margin: 10px 0 6px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #9bb7da;
+        font-size: 13px;
+      }
+      .hint {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #47617e;
+      }
+      .actions {
+        margin-top: 18px;
+      }
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 9px 14px;
+        margin-right: 8px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      button.primary {
+        background: #125eb8;
+        color: white;
+      }
+      button.secondary {
+        background: #4f6781;
+        color: white;
+      }
+      .message {
+        margin-top: 12px;
+        font-size: 13px;
+        min-height: 18px;
+      }
+      .error {
+        color: #9d1c1c;
+      }
+      .success {
+        color: #0f6e2a;
+      }
+      .path {
+        margin-top: 10px;
+        font-size: 12px;
+        color: #546d88;
+        word-break: break-all;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>First-Run Configuration</h1>
+      <p>Enter database and security settings once. The app will save them for future launches.</p>
+
+      <label for="databaseUrl">DATABASE_URL</label>
+      <input id="databaseUrl" placeholder="postgres://postgres:password@localhost:5432/lab_inventory" />
+      <div class="hint">Must start with <code>postgres://</code> or <code>postgresql://</code>.</div>
+
+      <label for="jwtSecret">JWT_SECRET</label>
+      <input id="jwtSecret" type="password" placeholder="Minimum 32 characters" />
+      <div class="hint">Use a long secret string. Do not share it.</div>
+
+      <label for="jwtExpiresIn">JWT_EXPIRES_IN</label>
+      <input id="jwtExpiresIn" value="8h" placeholder="8h" />
+
+      <div class="actions">
+        <button id="saveBtn" class="primary">Save and Start</button>
+        <button id="cancelBtn" class="secondary">Cancel</button>
+      </div>
+
+      <div id="message" class="message"></div>
+      <div id="configPath" class="path"></div>
+    </div>
+
+    <script>
+      const databaseUrl = document.getElementById('databaseUrl');
+      const jwtSecret = document.getElementById('jwtSecret');
+      const jwtExpiresIn = document.getElementById('jwtExpiresIn');
+      const saveBtn = document.getElementById('saveBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
+      const message = document.getElementById('message');
+      const configPath = document.getElementById('configPath');
+
+      function setMessage(text, mode) {
+        message.textContent = text || '';
+        message.className = `message ${mode || ''}`;
+      }
+
+      async function loadExisting() {
+        const config = await window.desktopApi.getConfig();
+        if (config.databaseUrl) databaseUrl.value = config.databaseUrl;
+        if (config.jwtExpiresIn) jwtExpiresIn.value = config.jwtExpiresIn;
+        configPath.textContent = `Saved to: ${config.configPath}`;
+      }
+
+      saveBtn.addEventListener('click', async () => {
+        setMessage('', '');
+        saveBtn.disabled = true;
+        const payload = {
+          databaseUrl: databaseUrl.value,
+          jwtSecret: jwtSecret.value,
+          jwtExpiresIn: jwtExpiresIn.value || '8h',
+        };
+        const result = await window.desktopApi.saveConfig(payload);
+        if (!result || !result.ok) {
+          saveBtn.disabled = false;
+          setMessage(result && result.message ? result.message : 'Failed to save configuration.', 'error');
+          return;
+        }
+        setMessage('Saved. Starting server...', 'success');
+      });
+
+      cancelBtn.addEventListener('click', async () => {
+        await window.desktopApi.cancelConfig();
+      });
+
+      loadExisting().catch((error) => {
+        setMessage(error.message || 'Failed to load config defaults.', 'error');
+      });
+    </script>
+  </body>
+</html>

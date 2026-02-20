@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab Inventory Desktop</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background: linear-gradient(165deg, #eff7ff, #d8e8fb);
+        color: #0f2741;
+      }
+      .wrap {
+        padding: 18px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 20px;
+      }
+      p {
+        margin: 6px 0;
+        font-size: 13px;
+      }
+      .urls {
+        margin: 14px 0;
+        padding: 10px;
+        background: #ffffffc7;
+        border-radius: 10px;
+        border: 1px solid #bdd6f2;
+      }
+      .row {
+        margin-bottom: 6px;
+        word-break: break-all;
+        font-size: 13px;
+      }
+      button {
+        margin-right: 8px;
+        margin-top: 8px;
+        border: 0;
+        border-radius: 999px;
+        padding: 9px 14px;
+        font-size: 13px;
+        cursor: pointer;
+        background: #0f63c7;
+        color: white;
+      }
+      button.secondary {
+        background: #45617b;
+      }
+      label {
+        display: block;
+        margin-top: 14px;
+        font-size: 13px;
+      }
+      .logpath {
+        margin-top: 10px;
+        font-size: 12px;
+        color: #42566d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Lab Inventory Desktop</h1>
+      <p>Server is hosted on this computer and accessible on the same local network.</p>
+      <div class="urls">
+        <div class="row"><strong>Local:</strong> <span id="localUrl">Loading...</span></div>
+        <div class="row"><strong>LAN:</strong> <span id="lanUrl">Loading...</span></div>
+      </div>
+      <button id="openLocal">Open Local</button>
+      <button id="openLan" class="secondary">Open LAN URL</button>
+      <button id="quit" class="secondary">Stop App</button>
+      <label>
+        <input type="checkbox" id="autostart" />
+        Start automatically when Windows starts (optional)
+      </label>
+      <div class="logpath" id="logPath"></div>
+    </div>
+    <script>
+      const els = {
+        localUrl: document.getElementById('localUrl'),
+        lanUrl: document.getElementById('lanUrl'),
+        autostart: document.getElementById('autostart'),
+        logPath: document.getElementById('logPath'),
+        openLocal: document.getElementById('openLocal'),
+        openLan: document.getElementById('openLan'),
+        quit: document.getElementById('quit'),
+      };
+
+      async function loadStatus() {
+        const status = await window.desktopApi.getStatus();
+        els.localUrl.textContent = status.localUrl;
+        els.lanUrl.textContent = status.lanUrl || 'No LAN IP detected';
+        els.autostart.checked = Boolean(status.autostart);
+        els.logPath.textContent = `Logs: ${status.logFilePath}`;
+        els.openLan.disabled = !status.lanUrl;
+      }
+
+      els.openLocal.addEventListener('click', () => window.desktopApi.openLocal());
+      els.openLan.addEventListener('click', () => window.desktopApi.openLan());
+      els.quit.addEventListener('click', () => window.desktopApi.quit());
+      els.autostart.addEventListener('change', async (event) => {
+        const enabled = await window.desktopApi.setAutostart(event.target.checked);
+        els.autostart.checked = Boolean(enabled);
+      });
+
+      loadStatus().catch((error) => {
+        console.error(error);
+      });
+    </script>
+  </body>
+</html>

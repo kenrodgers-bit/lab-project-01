@@ -14,7 +14,6 @@ const app = express();
 const port = Number(process.env.PORT || 4000);
 const host = process.env.HOST || '0.0.0.0';
 const distPath = path.resolve(__dirname, '..', '..', 'dist');
-let serverInstance = null;
 
 if (!process.env.DATABASE_URL) {
   throw new Error('Missing DATABASE_URL environment variable.');
@@ -950,48 +949,6 @@ app.use((error, _req, res, _next) => {
   return res.status(500).json({ message: 'Unexpected server error.' });
 });
 
-function startServer(options = {}) {
-  const listenPort = Number(options.port || port);
-  const listenHost = options.host || host;
-
-  return new Promise((resolve, reject) => {
-    if (serverInstance) {
-      return resolve(serverInstance);
-    }
-
-    const onError = (error) => {
-      serverInstance = null;
-      reject(error);
-    };
-
-    serverInstance = app.listen(listenPort, listenHost, () => {
-      console.log(`Backend API running on http://${listenHost}:${listenPort}`);
-      resolve(serverInstance);
-    });
-    serverInstance.once('error', onError);
-    return undefined;
-  });
-}
-
-function stopServer() {
-  return new Promise((resolve, reject) => {
-    if (!serverInstance) {
-      return resolve();
-    }
-    serverInstance.close((error) => {
-      if (error) return reject(error);
-      serverInstance = null;
-      return resolve();
-    });
-    return undefined;
-  });
-}
-
-module.exports = { app, startServer, stopServer };
-
-if (require.main === module) {
-  startServer().catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
-}
+app.listen(port, host, () => {
+  console.log(`Backend API running on http://${host}:${port}`);
+});
